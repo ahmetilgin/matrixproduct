@@ -9,12 +9,14 @@ using namespace std;
 double matrixA[1000][1000];
 double matrixB[1000][1000];
 double matrixC[1000][1000];
+double transpozeMatris[1000][1000];
 
 void matrisleriDoldur(int);
 void seriCarpim(int);
 void paralelCarpim(int);
 void *cellSum(void *args);
 void displayMatrix(int);
+void transPozeAl(int);
 
 // pthreada artgumanları geçirmek için oluşturulmuş trhead
 struct arg_struct{
@@ -26,10 +28,10 @@ int main(){
 	// Matris A ve B ye rastgele double değişkenler atıp doldurduktan sonra MAtrisC yi yani çarpım sonucu olan matrisi 0 lıyor aynı zamanda
 	matrisleriDoldur(1000);
 
-    cout<<"****\nDOUBLE Degiskenler çarpılıyor...\nHer Satir için ayrı Thread oluşturuldu.."<<endl;
+    cout<<"****\nDOUBLE  Degiskenler Transpoze alınmış B matsii ile çarpılıyor...\n Her Satir için ayrı Thread oluşturuldu.."<<endl;
 	struct timespec start, finish;		//Gecen Süre hesaplamak için başlangıc ve bitiş zamanı
 	double elapsed;   // gecen süre
-
+	transPozeAl(1000);
 	clock_gettime(CLOCK_MONOTONIC, &start);  // Saati başlat Seri Çarpım sırasında ki geçen süre hsesabı için
 	seriCarpim(1000);
 	clock_gettime(CLOCK_MONOTONIC, &finish); // Saati Bitir
@@ -48,6 +50,15 @@ int main(){
 	cout << "Paralel Carpim İcin Gecen Sure: " << elapsed << " Saniye";
 	cout << endl;
 	//displayMatrix(5); // ilk 5 elemanını yazdır.
+}
+
+void transPozeAl(int satirSayisi){
+	for(int i = 0; i < satirSayisi ; i ++){
+		for(int j = 0; i < satirSayisi ;j++){
+			transpozeMatris[i][j] = matrixB[j][i];
+		}
+	}
+
 }
 
 //To fill the two matrices with random values and to clean matrix C.
@@ -93,7 +104,7 @@ void seriCarpim(int satirSayisi){
 		for (int j = 0; j < satirSayisi; j++){ // ikinci matrisin sutunu üzerinde hareket için
 			sum = 0; // matrislerde elemanarın çarpımları sonrası ara toplamı sıfırlamak gerek onun için
 			for (int k = 0; k < satirSayisi; k++){  // ilk matrisde satir üzerinde ilerken ikinci matriste sutun üzerinde hareket sağlandı
-				sum = sum + matrixA[i][k] * matrixB[k][j];  // çarpımları ara toplam şekilde ifade ediyoruz
+				sum = sum + matrixA[i][k] * transpozeMatris[j][k];  // çarpımları ara toplam şekilde ifade ediyoruz
 			}
 			matrixC[i][j] = sum;  // en son bitince toplam sonucunu sonuc matrisine yaz
 		}
@@ -131,7 +142,7 @@ void *cellSum(void *arguments){
 	for (int j = 0; j < satirSayisi; j++){			//Her thread için bu işlemleri yapıyoruz ki bu da bildiğimiz matris çarpımı sadece tek vektör var i burda matriste ki hangi vektörleri alacağımızı anlatıyor
 		double sum = 0;
 		for (int k = 0; k < satirSayisi; k++){
-			sum = sum + matrixA[i][k] * matrixB[k][j];
+			sum = sum + matrixA[i][k] * matrixB[j][k];
 		}
 		matrixC[i][j] = sum;
 	}
