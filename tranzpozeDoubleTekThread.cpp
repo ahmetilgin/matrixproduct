@@ -56,7 +56,7 @@ int main(){
 
 void transPozeAl(int satirSayisi){
 	for(int i = 0; i < satirSayisi ; i ++){
-		for(int j = 0; i < satirSayisi ;j++){
+		for(int j = 0; j < satirSayisi ;j++){
 			transpozeMatris[i][j] = matrixB[j][i];
 		}
 	}
